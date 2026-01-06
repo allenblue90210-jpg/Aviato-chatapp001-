@@ -9,40 +9,70 @@ import { Label } from '../components/ui/label';
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { login } = useAppContext();
+  const { login, signup } = useAppContext();
+  const [isSignUp, setIsSignUp] = useState(false);
+  
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      if (!email || !password) {
+      if (!email || !password || (isSignUp && !name)) {
         throw new Error('Please fill in all fields');
       }
       
-      await login(email, password);
+      if (isSignUp) {
+        await signup(name, email, password);
+      } else {
+        await login(email, password);
+      }
       navigate('/match');
     } catch (err) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || (isSignUp ? 'Failed to sign up' : 'Failed to sign in'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setError('');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-lg border-0">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold text-gray-900">Welcome to Aviato</CardTitle>
-          <CardDescription className="text-gray-500">Sign in to continue your journey</CardDescription>
+          <CardTitle className="text-3xl font-bold text-gray-900">
+            {isSignUp ? 'Create an Account' : 'Welcome to Aviato'}
+          </CardTitle>
+          <CardDescription className="text-gray-500">
+            {isSignUp ? 'Join the community today' : 'Sign in to continue your journey'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input 
+                  id="name" 
+                  type="text" 
+                  placeholder="John Doe" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+            )}
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 
@@ -72,7 +102,10 @@ const SignInPage = () => {
               className="w-full h-11 bg-mode-blue hover:bg-blue-700 text-white font-medium text-lg"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading 
+                ? (isSignUp ? 'Creating Account...' : 'Signing in...') 
+                : (isSignUp ? 'Sign Up' : 'Sign In')
+              }
             </Button>
             
             <div className="relative my-4">
@@ -85,7 +118,13 @@ const SignInPage = () => {
             </div>
             
             <div className="text-center text-sm text-gray-500">
-              Don't have an account? <span className="text-mode-blue cursor-pointer hover:underline">Sign up</span>
+              {isSignUp ? "Already have an account? " : "Don't have an account? "}
+              <span 
+                onClick={toggleMode}
+                className="text-mode-blue cursor-pointer hover:underline font-medium"
+              >
+                {isSignUp ? 'Sign in' : 'Sign up'}
+              </span>
             </div>
           </form>
         </CardContent>
