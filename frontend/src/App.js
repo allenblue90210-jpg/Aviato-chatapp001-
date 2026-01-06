@@ -19,6 +19,7 @@ import RedModeSettings from './pages/modes/RedModeSettings';
 import GrayModeSettings from './pages/modes/GrayModeSettings';
 import BrownModeSettings from './pages/modes/BrownModeSettings';
 import { Toaster } from './components/ui/toaster';
+import RequireAuth from './components/common/RequireAuth';
 
 function App() {
   return (
@@ -29,7 +30,11 @@ function App() {
           <Route path="/signin" element={<SignInPage />} />
           
           {/* Protected routes */}
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={
+            <RequireAuth>
+              <Layout />
+            </RequireAuth>
+          }>
             <Route index element={<Navigate to="/match" replace />} />
             <Route path="match" element={<MatchPage />} />
             <Route path="chat" element={<ChatListPage />} />

@@ -78,6 +78,8 @@ export const AppProvider = ({ children }) => {
   }, [conversations]);
 
   const login = async (email, password) => {
+    // For now, we simulate login by creating a user session
+    // In a real app, this would verify credentials against backend
     const mockUser = { 
         ...mockUsers[0], 
         id: "current-user", 
@@ -100,14 +102,53 @@ export const AppProvider = ({ children }) => {
     return true;
   };
 
+  const signup = async (name, email, password) => {
+    // Simulate signup
+    const newUser = {
+        ...mockUsers[0], // Inherit default props from mock user 1
+        id: `user-${Date.now()}`,
+        name: name,
+        email: email,
+        availabilityMode: AvailabilityMode.GREEN,
+        availability: {
+            openDate: null,
+            laterMinutes: 0,
+            laterStartTime: null,
+            maxContact: 5,
+            currentContacts: 0,
+            timedHour: null,
+            timedMinute: null
+        },
+        selections: [], // Start with empty selections
+        approvalRating: 100, // Start with high approval
+        reviewRating: 5.0,
+        reviewCount: 0
+    };
+
+    // Add to users list
+    setUsers(prev => [...prev, newUser]);
+    
+    // Set as current user
+    setCurrentUser(newUser);
+    
+    // Initialize empty conversations or welcome message
+    // For demo purposes, we can give them the initial mock conversations too, 
+    // or start fresh. Let's start fresh for new users but maybe with one welcome chat?
+    // For now, keeping it same as login for simplicity in this MVP
+    const initialConversations = getInitialMockConversations();
+    setConversations(initialConversations);
+    
+    return true;
+  };
+
   const logout = () => {
     setCurrentUser(null);
     setConversations([]);
     setCurrentSelections([]);
-    setUsers(mockUsers); // Reset users to default
+    // We don't reset users list on logout so that the new user persists in the "database" (localStorage)
     localStorage.removeItem('aviato_current_user');
     localStorage.removeItem('aviato_conversations');
-    localStorage.removeItem('aviato_users');
+    // localStorage.removeItem('aviato_users'); // Don't remove users
   };
 
   const deleteAllChats = () => setConversations([]);
@@ -369,7 +410,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const value = {
-    currentUser, isAuthenticated: !!currentUser, login, logout,
+    currentUser, isAuthenticated: !!currentUser, login, signup, logout,
     users, getUserById, currentSelections, addSelection, removeSelection, clearSelections, findMatches,
     conversations, startChat, updateConversationTimer, sendMessage, receiveMessage, 
     markConversationRated, updateUserApproval, rateConversation, getConversation,
