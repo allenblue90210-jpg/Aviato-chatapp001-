@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { 
@@ -36,31 +36,35 @@ export default function MatchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 1. Get base list (either matched by selection or just all users sorted by rating)
-  const baseUsers = currentSelections.length > 0 
-    ? findMatches() 
-    : [...users].sort((a, b) => b.approvalRating - a.approvalRating);
+  // Optimized Search & Filter Logic
+  const displayUsers = useMemo(() => {
+    // 1. If searching, search GLOBAL users (ignoring interest filters to find anyone)
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const numQuery = parseInt(query);
+        const isNum = !isNaN(numQuery);
 
-  // 2. Apply Search Filter
-  const displayUsers = baseUsers.filter(user => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    
-    // Name match
-    if (user.name.toLowerCase().includes(query)) return true;
-    
-    // Vibe match
-    if (user.vibe?.toLowerCase().includes(query)) return true;
-    
-    // Rating match (if query is a number, search for users with approval rating >= query)
-    const numQuery = parseInt(query);
-    if (!isNaN(numQuery)) {
-        // Allow exact match or greater than
-        return user.approvalRating >= numQuery; 
+        return users.filter(user => {
+            // Name match
+            if (user.name.toLowerCase().includes(query)) return true;
+            // Vibe match
+            if (user.vibe?.toLowerCase().includes(query)) return true;
+            // Rating match (>= query)
+            if (isNum && user.approvalRating >= numQuery) return true;
+            
+            return false;
+        }).sort((a, b) => b.approvalRating - a.approvalRating);
     }
-    
-    return false;
-  });
+
+    // 2. If no search, use standard Selection/Interest matching
+    if (currentSelections.length > 0) {
+        return findMatches();
+    }
+
+    // 3. Default: Show all users sorted by rating
+    return [...users].sort((a, b) => b.approvalRating - a.approvalRating);
+
+  }, [searchQuery, users, currentSelections, findMatches]);
 
   const handleMessage = (userId) => {
     navigate(`/chat/${userId}`);
