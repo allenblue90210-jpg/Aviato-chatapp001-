@@ -8,7 +8,7 @@ import ModeIndicator from '../components/availability/ModeIndicator';
 import RatingModal from '../components/chat/RatingModal';
 
 const ReviewPage = () => {
-  const { users, currentUser, rateConversation } = useAppContext();
+  const { users, currentUser, submitReview } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -20,7 +20,7 @@ const ReviewPage = () => {
 
   const handleRateSubmit = (rating) => {
     if (selectedUser) {
-        rateConversation(selectedUser.id, rating);
+        submitReview(selectedUser.id, rating);
     }
     setSelectedUser(null);
   };
@@ -86,6 +86,7 @@ const ReviewPage = () => {
           onRate={handleRateSubmit}
           userName={selectedUser.name}
           title={`Rate ${selectedUser.name}`}
+          type="review"
         />
       )}
     </div>

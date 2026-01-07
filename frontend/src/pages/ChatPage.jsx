@@ -192,9 +192,9 @@ const ChatPage = () => {
     return formatTime(timeRemaining);
   };
 
-  const handleRate = useCallback((rating) => {
+  const handleRate = useCallback((isGood, reason) => {
     if (rateConversation) {
-        rateConversation(userId, rating);
+        rateConversation(userId, isGood, reason);
     }
     setHasRatedCurrentSession(true);
     setShowRatingModal(false);
@@ -345,13 +345,13 @@ const ChatPage = () => {
         <RatingModal
           isOpen={showRatingModal}
           userName={otherUser.name}
-          otherUserReplied={conversation?.messages.some(m => m.senderId === userId)}
           onRate={handleRate}
           onClose={() => {
             setShowRatingModal(false);
             setHasRatedCurrentSession(true);
           }}
           onGoBack={() => navigate(-1)}
+          type="chat"
         />
       )}
     </div>
