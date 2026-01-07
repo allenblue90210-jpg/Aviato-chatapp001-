@@ -256,9 +256,10 @@ export default function ProfilePage() {
               className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md" 
             />
             <div 
-              className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer shadow-md border border-gray-100"
+              className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer shadow-md border border-gray-100 hover:bg-gray-50 transition-colors"
+              onClick={() => setIsProfilePicOpen(true)}
             >
-              <span className="text-sm font-medium text-gray-600">Edit</span>
+              <Edit2 className="w-4 h-4 text-gray-600" />
             </div>
           </div>
           <h2 className="mt-4 text-2xl font-bold text-gray-900">{currentUser.name}</h2>
