@@ -431,6 +431,13 @@ export default function ProfilePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {/* Profile Pic Dialog */}
+      <ProfilePicDialog 
+        isOpen={isProfilePicOpen}
+        onClose={() => setIsProfilePicOpen(false)}
+        currentPic={currentUser.profilePic}
+        onSave={updateProfilePic}
+      />
     </div>
   );
 }
