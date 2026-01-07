@@ -320,15 +320,14 @@ export const AppProvider = ({ children }) => {
     });
   };
   
-  const markConversationRated = (userId, isGood, reason = null) => {
+  const markConversationRated = (userId, rating) => {
     setConversations(prev => prev.map(c => {
       if (c.userId === userId) {
         return {
           ...c,
           rated: true,
           timerExpired: true,
-          ratingType: isGood ? 'good' : 'bad',
-          ratingReason: reason
+          ratingValue: rating
         };
       }
       return c;
