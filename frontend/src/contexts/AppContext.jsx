@@ -434,18 +434,18 @@ export const AppProvider = ({ children }) => {
 
   const updateProfilePic = useCallback((newUrl) => {
     if (!currentUser) return;
+    const updatedUser = { ...currentUser, profilePic: newUrl };
+    setCurrentUser(updatedUser);
+    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+    showToast('Profile picture updated', 'success');
+  }, [currentUser, showToast]);
+
   const updateProfileName = useCallback((newName) => {
     if (!currentUser) return;
     const updatedUser = { ...currentUser, name: newName };
     setCurrentUser(updatedUser);
     setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
     showToast('Profile name updated', 'success');
-  }, [currentUser, showToast]);
-
-    const updatedUser = { ...currentUser, profilePic: newUrl };
-    setCurrentUser(updatedUser);
-    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
-    showToast('Profile picture updated', 'success');
   }, [currentUser, showToast]);
 
   const getConversation = (userId) => conversations.find(c => c.userId === userId);
