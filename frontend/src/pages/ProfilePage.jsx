@@ -29,6 +29,7 @@ export default function ProfilePage() {
   // State for modals
   const [deactivateMode, setDeactivateMode] = useState(null);
   const [settingsMode, setSettingsMode] = useState(null);
+  const [isProfilePicOpen, setIsProfilePicOpen] = useState(false);
   const [confirmRedMode, setConfirmRedMode] = useState(false);
   const [isInterestsOpen, setIsInterestsOpen] = useState(false);
   
