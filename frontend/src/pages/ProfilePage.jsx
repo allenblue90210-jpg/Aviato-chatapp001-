@@ -264,7 +264,17 @@ export default function ProfilePage() {
               <Edit2 className="w-4 h-4 text-gray-600" />
             </div>
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900">{currentUser.name}</h2>
+          <div className="flex items-center gap-2 mt-4 justify-center">
+            <h2 className="text-2xl font-bold text-gray-900">{currentUser.name}</h2>
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6 rounded-full hover:bg-gray-100 text-gray-400"
+                onClick={() => setIsEditNameOpen(true)}
+            >
+                <Edit2 className="w-3.5 h-3.5" />
+            </Button>
+          </div>
           <p className="text-gray-500">{currentUser.location || 'San Francisco, CA'}</p>
         </div>
 
