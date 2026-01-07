@@ -402,6 +402,7 @@ export const AppProvider = ({ children }) => {
     const newReview = {
         raterId: currentUser.id,
         raterName: currentUser.name || "Anonymous",
+        raterProfilePic: currentUser.profilePic,
         rating: rating,
         timestamp: Date.now()
     };
