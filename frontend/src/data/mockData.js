@@ -29,6 +29,9 @@ export const mockUsers = [
       timedHour: null,
       timedMinute: null
     }
+      timedMinute: null
+    },
+    reviews: [] // Initialize empty reviews array for new user structure
   },
   {
     id: "2",
