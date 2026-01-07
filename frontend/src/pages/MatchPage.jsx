@@ -10,12 +10,14 @@ import {
   PauseCircle,
   ThumbsUp,
   Star,
-  Filter
+  Filter,
+  Search
 } from 'lucide-react';
 import { checkUserAvailability, getModeColor, getApprovalColor } from '../utils/availability';
 import { AvailabilityMode } from '../data/mockData';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+import { Input } from '../components/ui/input';
 import CategorySelector from '../components/availability/CategorySelector';
 
 export default function MatchPage() {
@@ -32,12 +34,33 @@ export default function MatchPage() {
   } = useAppContext();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // If we have selections, show matches. Otherwise show browsing.
-  // Sort users by approval rating (highest first)
-  const displayUsers = currentSelections.length > 0 
+  // 1. Get base list (either matched by selection or just all users sorted by rating)
+  const baseUsers = currentSelections.length > 0 
     ? findMatches() 
     : [...users].sort((a, b) => b.approvalRating - a.approvalRating);
+
+  // 2. Apply Search Filter
+  const displayUsers = baseUsers.filter(user => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    
+    // Name match
+    if (user.name.toLowerCase().includes(query)) return true;
+    
+    // Vibe match
+    if (user.vibe?.toLowerCase().includes(query)) return true;
+    
+    // Rating match (if query is a number, search for users with approval rating >= query)
+    const numQuery = parseInt(query);
+    if (!isNaN(numQuery)) {
+        // Allow exact match or greater than
+        return user.approvalRating >= numQuery; 
+    }
+    
+    return false;
+  });
 
   const handleMessage = (userId) => {
     navigate(`/chat/${userId}`);
@@ -50,9 +73,9 @@ export default function MatchPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header - Replaced Aviato Logo with Match Features */}
-      <div className="bg-white px-4 py-3 sticky top-0 z-10 border-b border-gray-200 flex justify-between items-center shadow-sm">
-        <div className="flex-1">
+      {/* Header */}
+      <div className="bg-white px-4 py-3 sticky top-0 z-10 border-b border-gray-200 shadow-sm space-y-3">
+        <div>
           <h1 className="text-xl font-bold text-gray-900">Find your Vibe</h1>
           <p className="text-xs text-gray-500">
             {currentSelections.length > 0 
@@ -61,20 +84,32 @@ export default function MatchPage() {
             }
           </p>
         </div>
-        <Button 
-          onClick={() => setIsFilterOpen(true)}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800"
-        >
-          <Filter className="w-4 h-4" />
-          <span>Filter</span>
-          {currentSelections.length > 0 && (
-            <Badge variant="secondary" className="bg-blue-200 text-blue-800 hover:bg-blue-200 ml-1 h-5 px-1.5 min-w-[20px] justify-center">
-              {currentSelections.length}
-            </Badge>
-          )}
-        </Button>
+
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+            <Input
+              placeholder="Search name or rating..."
+              className="pl-9 bg-gray-50 border-gray-200 h-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Button 
+            onClick={() => setIsFilterOpen(true)}
+            variant="outline"
+            size="icon"
+            className="h-10 w-10 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 shrink-0"
+          >
+            <Filter className="w-4 h-4" />
+            {currentSelections.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Selected Categories Horizontal Scroll */}
@@ -99,7 +134,9 @@ export default function MatchPage() {
       <div className="p-4 space-y-4">
         {displayUsers.length === 0 ? (
            <div className="text-center py-10 text-gray-500">
-             No matches found with these interests.
+             {searchQuery 
+                ? `No users found matching "${searchQuery}"` 
+                : "No matches found with these interests."}
            </div>
         ) : (
           displayUsers.filter(u => u.id !== currentUser?.id).map(user => (
