@@ -439,6 +439,8 @@ export const AppProvider = ({ children }) => {
 
   }, [users, currentUser, showToast]);
 
+    markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, updateProfilePic,
+
   const getConversation = (userId) => conversations.find(c => c.userId === userId);
   const getUserById = (userId) => users.find(u => u.id === userId);
 
