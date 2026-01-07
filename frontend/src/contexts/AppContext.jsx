@@ -426,6 +426,12 @@ export const AppProvider = ({ children }) => {
           };
         }
         return u;
+    }));
+
+    showToast(`Review submitted: ${rating} stars`, 'success');
+
+  }, [users, currentUser, showToast]);
+
   const updateProfilePic = useCallback((newUrl) => {
     if (!currentUser) return;
     const updatedUser = { ...currentUser, profilePic: newUrl };
@@ -433,13 +439,6 @@ export const AppProvider = ({ children }) => {
     setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
     showToast('Profile picture updated', 'success');
   }, [currentUser, showToast]);
-    }));
-
-    showToast(`Review submitted: ${rating} stars`, 'success');
-
-  }, [users, currentUser, showToast]);
-
-    markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, updateProfilePic,
 
   const getConversation = (userId) => conversations.find(c => c.userId === userId);
   const getUserById = (userId) => users.find(u => u.id === userId);
