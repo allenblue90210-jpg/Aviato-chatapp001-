@@ -112,10 +112,19 @@ const ReviewPage = () => {
                                   <p className="text-sm text-gray-500 italic">No reviews yet.</p>
                               ) : (
                                   userReviews.map((review, idx) => (
-                                      <div key={idx} className="flex justify-between items-center text-sm">
-                                          <span className="text-gray-700 font-medium">
-                                              {review.raterId === currentUser?.id ? "You" : review.raterName}
-                                          </span>
+                                      <div key={idx} className="flex justify-between items-center text-sm p-2 bg-white rounded-lg border border-gray-100 shadow-sm">
+                                          <div className="flex items-center gap-2">
+                                            {review.raterProfilePic && (
+                                              <img 
+                                                src={review.raterProfilePic} 
+                                                alt={review.raterName} 
+                                                className="w-6 h-6 rounded-full object-cover"
+                                              />
+                                            )}
+                                            <span className="text-gray-700 font-medium">
+                                                {review.raterId === currentUser?.id ? "You" : review.raterName}
+                                            </span>
+                                          </div>
                                           <div className="flex items-center gap-1">
                                               <span className="text-yellow-600 font-bold">{review.rating}</span>
                                               <Star className="w-3 h-3 text-yellow-500 fill-current" />
