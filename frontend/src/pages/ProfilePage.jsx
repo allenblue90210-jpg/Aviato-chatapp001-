@@ -440,6 +440,14 @@ export default function ProfilePage() {
             >
               Deactivate
             </AlertDialogAction>
+      {/* Edit Name Dialog */}
+      <EditNameDialog
+        isOpen={isEditNameOpen}
+        onClose={() => setIsEditNameOpen(false)}
+        currentName={currentUser.name}
+        onSave={updateProfileName}
+      />
+
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
