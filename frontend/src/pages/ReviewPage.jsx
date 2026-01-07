@@ -8,7 +8,7 @@ import ModeIndicator from '../components/availability/ModeIndicator';
 import RatingModal from '../components/chat/RatingModal';
 
 const ReviewPage = () => {
-  const { users, currentUser } = useAppContext();
+  const { users, currentUser, rateConversation } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -19,9 +19,10 @@ const ReviewPage = () => {
   );
 
   const handleRateSubmit = (rating) => {
-    console.log(`Rated ${selectedUser.name} with ${rating} stars`);
+    if (selectedUser) {
+        rateConversation(selectedUser.id, rating);
+    }
     setSelectedUser(null);
-    // Here we would call context to update the rating
   };
 
   return (
