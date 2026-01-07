@@ -22,8 +22,8 @@ import { AvailabilityMode } from '../data/mockData';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { currentUser, isAuthenticated, setAvailabilityMode, showToast, updateUserSelections } = useAppContext();
   const { currentUser, isAuthenticated, setAvailabilityMode, showToast, updateUserSelections, updateProfilePic } = useAppContext();
+
 
   
   // State for modals
