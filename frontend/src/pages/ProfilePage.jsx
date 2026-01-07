@@ -16,6 +16,7 @@ import {
 } from "../components/ui/alert-dialog";
 import ModeCard from '../components/profile/ModeCard';
 import ModeSettingsDialog from '../components/profile/ModeSettingsDialog';
+import ProfilePicDialog from '../components/profile/ProfilePicDialog';
 import CategorySelector from '../components/availability/CategorySelector';
 import { AvailabilityMode } from '../data/mockData';
 
