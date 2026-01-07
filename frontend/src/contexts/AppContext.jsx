@@ -488,7 +488,6 @@ export const AppProvider = ({ children }) => {
     markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, 
     updateProfilePic, updateProfileName,
     setAvailabilityMode, getCurrentMode, theme, setTheme, deleteAllChats, showToast, setSelections, updateUserSelections 
-  }; 
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
