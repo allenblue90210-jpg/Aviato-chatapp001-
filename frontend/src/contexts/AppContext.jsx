@@ -359,34 +359,48 @@ export const AppProvider = ({ children }) => {
     }));
   }, []);
 
-  const rateConversation = useCallback((userId, isGood, reason = null) => {
+  const rateConversation = useCallback((userId, rating) => {
     const conversation = conversations.find(c => c.userId === userId);
-    if (!conversation) return;
+    // If called from ReviewPage, conversation might not exist or timer might not be involved
+    // We should allow rating regardless, but if it's an active conversation, we mark it rated.
 
-    let change;
-    if (isGood) {
-      change = 10;
-    } else {
-      const penalties = {
-        'No response / Ghosted': -15,
-        'Rude or disrespectful': -20,
-        'Spam messages': -25,
-        'Inappropriate content': -30,
-        'One-word answers': -10
-      };
-      change = reason ? (penalties[reason] || -10) : -10;
+    // Calculate approval change based on stars
+    const change = calculateApprovalChange(rating);
+
+    // Update user's approval rating AND review stats
+    setUsers(prevUsers => prevUsers.map(u => {
+      if (u.id === userId) {
+        // Update average review rating
+        const oldRating = u.reviewRating || 0;
+        const oldCount = u.reviewCount || 0;
+        const newCount = oldCount + 1;
+        const newRating = ((oldRating * oldCount) + rating) / newCount;
+
+        return {
+          ...u,
+          approvalRating: u.approvalRating + change,
+          reviewRating: parseFloat(newRating.toFixed(1)),
+          reviewCount: newCount
+        };
+      }
+      return u;
+    }));
+
+    // If there is a conversation, mark it as rated
+    if (conversation) {
+        markConversationRated(userId, rating);
     }
-
-    updateUserApproval(userId, change);
-    markConversationRated(userId, isGood, reason);
     
-    if (isGood) {
-        showToast(`Rated positively! +${change}% approval`, 'success');
+    // Show toast
+    if (rating >= 4) {
+        showToast(`Rated ${rating} stars! Approval +${change}%`, 'success');
+    } else if (rating <= 2) {
+        showToast(`Rated ${rating} stars. Approval ${change}%`, 'error'); // error variant usually red
     } else {
-        showToast(`Rated negatively: ${change}% approval`, 'error');
+        showToast(`Rated ${rating} stars.`, 'default');
     }
 
-  }, [conversations, updateUserApproval, showToast]);
+  }, [conversations, showToast]);
 
   const getConversation = (userId) => conversations.find(c => c.userId === userId);
   const getUserById = (userId) => users.find(u => u.id === userId);
