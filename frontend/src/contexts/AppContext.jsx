@@ -477,7 +477,7 @@ export const AppProvider = ({ children }) => {
     currentUser, isAuthenticated: !!currentUser, login, signup, logout,
     users, getUserById, currentSelections, addSelection, removeSelection, clearSelections, findMatches,
     conversations, startChat, updateConversationTimer, sendMessage, receiveMessage, 
-    markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation,
+    markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, updateProfilePic,
     setAvailabilityMode, getCurrentMode, theme, setTheme, deleteAllChats, showToast, setSelections, updateUserSelections 
   };
 
