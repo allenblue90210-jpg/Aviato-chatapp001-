@@ -83,9 +83,9 @@ const ReviewPage = () => {
         <RatingModal 
           isOpen={!!selectedUser} 
           onClose={() => setSelectedUser(null)}
-          onSubmit={handleRateSubmit}
+          onRate={handleRateSubmit}
           userName={selectedUser.name}
-          type="review"
+          title={`Rate ${selectedUser.name}`}
         />
       )}
     </div>
