@@ -426,6 +426,13 @@ export const AppProvider = ({ children }) => {
           };
         }
         return u;
+  const updateProfilePic = useCallback((newUrl) => {
+    if (!currentUser) return;
+    const updatedUser = { ...currentUser, profilePic: newUrl };
+    setCurrentUser(updatedUser);
+    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+    showToast('Profile picture updated', 'success');
+  }, [currentUser, showToast]);
     }));
 
     showToast(`Review submitted: ${rating} stars`, 'success');
