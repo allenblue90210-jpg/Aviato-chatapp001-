@@ -385,22 +385,43 @@ export const AppProvider = ({ children }) => {
 
   // REVIEW RATING (1-5 Stars) - New function
   const submitReview = useCallback((userId, rating) => {
+    if (!currentUser) return;
+
+    // Check if user already reviewed
+    const targetUser = users.find(u => u.id === userId);
+    if (!targetUser) return;
+    
+    if (targetUser.reviews && targetUser.reviews.some(r => r.raterId === currentUser.id)) {
+        showToast("You have already reviewed this user.", "error");
+        return;
+    }
+
     // Calculate approval change based on stars just for reference, but primary goal is updating review stats
     const change = rating === 5 ? 10 : rating === 4 ? 5 : rating === 1 ? -10 : rating === 2 ? -5 : 0;
 
+    const newReview = {
+        raterId: currentUser.id,
+        raterName: currentUser.name || "Anonymous",
+        rating: rating,
+        timestamp: Date.now()
+    };
+
     setUsers(prevUsers => prevUsers.map(u => {
         if (u.id === userId) {
-          // Update average review rating
-          const oldRating = u.reviewRating || 0;
-          const oldCount = u.reviewCount || 0;
-          const newCount = oldCount + 1;
-          const newRating = ((oldRating * oldCount) + rating) / newCount;
+          // Add new review
+          const updatedReviews = [...(u.reviews || []), newReview];
+          
+          // Recalculate average based on ALL reviews
+          const totalStars = updatedReviews.reduce((acc, r) => acc + r.rating, 0);
+          const newRating = totalStars / updatedReviews.length;
+          const newCount = updatedReviews.length;
   
           return {
             ...u,
-            approvalRating: u.approvalRating + change, // Also affect approval? User said "review rating is for only review feature" but implied it should still affect something. Assuming approval too.
+            approvalRating: u.approvalRating + change, 
             reviewRating: parseFloat(newRating.toFixed(1)),
-            reviewCount: newCount
+            reviewCount: newCount,
+            reviews: updatedReviews
           };
         }
         return u;
@@ -408,7 +429,7 @@ export const AppProvider = ({ children }) => {
 
     showToast(`Review submitted: ${rating} stars`, 'success');
 
-  }, [showToast]);
+  }, [users, currentUser, showToast]);
 
   const getConversation = (userId) => conversations.find(c => c.userId === userId);
   const getUserById = (userId) => users.find(u => u.id === userId);
