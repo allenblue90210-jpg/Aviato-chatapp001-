@@ -483,6 +483,7 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     currentUser, isAuthenticated: !!currentUser, login, signup, logout,
+    markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, updateProfilePic, updateProfileName,
     users, getUserById, currentSelections, addSelection, removeSelection, clearSelections, findMatches,
     conversations, startChat, updateConversationTimer, sendMessage, receiveMessage, 
     markConversationRated, updateUserApproval, rateConversation, submitReview, getConversation, updateProfilePic,
