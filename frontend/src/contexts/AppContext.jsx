@@ -36,10 +36,16 @@ export const AppProvider = ({ children }) => {
   const [users, setUsers] = useState(() => {
     try {
       const saved = localStorage.getItem('aviato_users');
-      return saved ? JSON.parse(saved) : mockUsers;
+      let parsed = saved ? JSON.parse(saved) : mockUsers;
+      // Data Migration: Ensure every user object has a 'reviews' array
+      parsed = parsed.map(u => ({
+        ...u,
+        reviews: Array.isArray(u.reviews) ? u.reviews : []
+      }));
+      return parsed;
     } catch (error) {
       console.error(error);
-      return mockUsers;
+      return mockUsers.map(u => ({ ...u, reviews: [] }));
     }
   });
   
