@@ -192,9 +192,9 @@ const ChatPage = () => {
     return formatTime(timeRemaining);
   };
 
-  const handleRate = useCallback((isGood, reason) => {
+  const handleRate = useCallback((rating) => {
     if (rateConversation) {
-        rateConversation(userId, isGood, reason);
+        rateConversation(userId, rating);
     }
     setHasRatedCurrentSession(true);
     setShowRatingModal(false);
