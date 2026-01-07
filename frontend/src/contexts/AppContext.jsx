@@ -334,6 +334,18 @@ export const AppProvider = ({ children }) => {
       return c;
     }));
   };
+  // Calculate approval change based on star rating (1-5)
+  const calculateApprovalChange = (rating) => {
+    switch(rating) {
+      case 5: return 10;
+      case 4: return 5;
+      case 3: return 0;
+      case 2: return -5;
+      case 1: return -10;
+      default: return 0;
+    }
+  };
+
   
   const updateUserApproval = useCallback((userId, change) => {
     setUsers(prevUsers => prevUsers.map(u => {
